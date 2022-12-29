@@ -1,9 +1,9 @@
-package org.jetbrains.plugins.template.listeners
+package com.github.strajk.intellijpluginmarkdownlint.listeners
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
-import org.jetbrains.plugins.template.services.MyProjectService
+import com.github.strajk.intellijpluginmarkdownlint.services.MyProjectService
 
 internal class MyProjectManagerListener : ProjectManagerListener {
 
