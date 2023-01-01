@@ -1,4 +1,4 @@
-package com.github.strajk.intellijpluginmarkdownlint
+package me.strajk.intellijpluginmarkdownlint
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls

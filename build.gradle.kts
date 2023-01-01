@@ -4,31 +4,24 @@ import org.jetbrains.changelog.markdownToHTML
 fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
-    // Java support
-    id("java")
-    // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.7.21"
-    // Gradle IntelliJ Plugin
-    id("org.jetbrains.intellij") version "1.10.0"
-    // Gradle Changelog Plugin
-    id("org.jetbrains.changelog") version "2.0.0"
-    // Gradle Qodana Plugin
-    id("org.jetbrains.qodana") version "0.1.13"
-    // Gradle Kover Plugin
-    id("org.jetbrains.kotlinx.kover") version "0.6.1"
+    id("java") // Java support
+    id("org.jetbrains.kotlin.jvm") version "1.7.21" // Kotlin support
+    id("org.jetbrains.intellij") version "1.10.0" // Gradle IntelliJ Plugin
+    id("org.jetbrains.changelog") version "2.0.0" // Gradle Changelog Plugin
+    id("org.jetbrains.qodana") version "0.1.13" // Gradle Qodana Plugin
+    id("org.jetbrains.kotlinx.kover") version "0.6.1" // Gradle Kover Plugin
 }
 
-group = properties("pluginGroup")
-version = properties("pluginVersion")
+group = properties("pluginGroup") // e.g. org.intellij.sdk
+version = properties("pluginVersion") // e.g. 2.0.0
 
-// Configure project's dependencies
 repositories {
     mavenCentral()
 }
 
-// Set the JVM language level used to build project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
 kotlin {
-    jvmToolchain(11)
+    // jvmToolchain(17) // JVM language level used to build project, Java 17 for IntelliJ platform 2022.2+
+    jvmToolchain(11) // Sadly, jdk 17 was causing issues (but I don't remember what exactly)
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
@@ -36,8 +29,6 @@ intellij {
     pluginName.set(properties("pluginName"))
     version.set(properties("platformVersion"))
     type.set(properties("platformType"))
-
-    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
     plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
 }
 
@@ -87,7 +78,8 @@ tasks {
         changeNotes.set(provider {
             with(changelog) {
                 renderItem(
-                    getOrNull(properties("pluginVersion")) ?: getLatest(),
+                    getOrNull(properties("pluginVersion"))
+                        ?: runCatching { getLatest() }.getOrElse { getUnreleased() },
                     Changelog.OutputType.HTML,
                 )
             }
@@ -103,6 +95,21 @@ tasks {
         systemProperty("jb.consents.confirmation.enabled", "false")
     }
 
+    runIde { // "Run Plugin" run configuration
+        /* https://github.com/JetBrains/JetBrainsRuntime/releases */
+        // Java 17 causes `class java.util.concurrent.ConcurrentHashMap cannot be cast to class java.util.HashMap`
+        // Java 11 seems to work, just a lot of warnings about CoreText
+        // TODO: Try JDK 14
+        jbrVersion.set("11_0_16b2043.64")
+        jbrVariant.set("jcef") // Needed for Markdown plugin
+    }
+
+    check { // "Run Tests" run configuration
+
+    }
+
+
+
     signPlugin {
         certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
         privateKey.set(System.getenv("PRIVATE_KEY"))
@@ -117,4 +124,8 @@ tasks {
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
         channels.set(listOf(properties("pluginVersion").split('-').getOrElse(1) { "default" }.split('.').first()))
     }
+}
+
+dependencies {
+    implementation("org.json:json:20220924")
 }
