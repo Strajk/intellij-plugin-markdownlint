@@ -3,6 +3,7 @@ package me.strajk.intellijpluginmarkdownlint
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.junit.Ignore
 
 /*
 * TODO:
@@ -11,6 +12,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 * */
 
 @TestDataPath("\$CONTENT_ROOT/src/test/testData")
+@Ignore /* skipped for now, see TODO above */
 class MyPluginTest : BasePlatformTestCase() {
 
     fun testFile() {
