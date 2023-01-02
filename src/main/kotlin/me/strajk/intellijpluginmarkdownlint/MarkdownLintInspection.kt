@@ -4,11 +4,10 @@ package me.strajk.intellijpluginmarkdownlint
 import me.strajk.intellijpluginmarkdownlint.settings.MarkdownlintSettingsConfigurable
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -19,7 +18,7 @@ const val defaultCustomConfigPath = "/Users/strajk/Projects/setup/.markdownlint-
 // TODO: Check UnfairLocalInspectionTool
 @Suppress("unused")
 class MarkdownLintInspection : LocalInspectionTool() {
-    private val log: Logger = Logger.getInstance(MarkdownLintInspection::class.java)
+    private val logger = logger<MarkdownLintInspection>() // TIP: See "Run configuration" for the log file location
 
     override fun checkFile(
         file: PsiFile,
@@ -46,14 +45,20 @@ class MarkdownLintInspection : LocalInspectionTool() {
             MarkdownlintSettingsConfigurable(project).settings.customConfigPath,
         )
 
+        val documentLineCount = document?.getLineCount() ?: 0
+
         val problemDescriptors = lintErrors.map { error ->
-            val lineNumberAbs = (error.lineNumber!! - 1).coerceAtLeast(0)
-            val start = document?.getLineStartOffset(lineNumberAbs)
-            val end = document?.getLineEndOffset(lineNumberAbs)
-            val range = TextRange(
-                start ?: 0,
-                end ?: 0
-            )
+            val lineNumberAbs = (error.lineNumber!! - 1)
+                .coerceAtLeast(0)
+                // TODO: This should ideally not be needed,
+                //  but I was getting `java.lang.IndexOutOfBoundsException: Wrong line: 5. Available lines count: 0`
+                //  when rapidly deleting the contents of a file
+                //  (inspired by https://github.com/andrepdo/findbugs-idea/commit/8f431b776400749d0c70ea9efa19c1f5cda303a7)
+                .coerceAtMost(documentLineCount)
+            val start = document?.getLineStartOffset(lineNumberAbs) ?: 0
+            val end = document?.getLineEndOffset(lineNumberAbs) ?: 0
+            val range = TextRange(start, end)
+            logger.info("Lint error: #$lineNumberAbs: ${error.ruleDescription}")
             manager.createProblemDescriptor(
                 file,
                 range,
@@ -119,7 +124,7 @@ class MarkdownLintInspection : LocalInspectionTool() {
             JSONArray(output)
         } catch (e: Exception) {
             if (e.message?.contains("text must start with '[' at 0") == true) {
-                println("[doWithMarkdownlintViaNode] 💥 ERROR not JSON output: $output")
+                logger.warn("[doWithMarkdownlintViaNode] 💥 ERROR not JSON output: $output")
                 JSONArray("[]")
             } else {
                 throw e
