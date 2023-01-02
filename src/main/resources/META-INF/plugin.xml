@@ -18,6 +18,7 @@
                 instance="me.strajk.intellijpluginmarkdownlint.settings.MarkdownlintSettingsConfigurable"
         />
 
+        <!--suppress PluginXmlValidity - `language="Markdown"` gets incorrectly reported -->
         <localInspection
                 language="Markdown"
 

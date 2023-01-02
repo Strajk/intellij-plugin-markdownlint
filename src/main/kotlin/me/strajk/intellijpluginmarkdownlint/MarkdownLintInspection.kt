@@ -4,6 +4,7 @@ package me.strajk.intellijpluginmarkdownlint
 import me.strajk.intellijpluginmarkdownlint.settings.MarkdownlintSettingsConfigurable
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.execution.configurations.GeneralCommandLine
@@ -13,6 +14,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.json.JSONArray
 
+const val defaultCustomConfigPath = "/Users/strajk/Projects/setup/.markdownlint-cli2.yaml"
+
 // TODO: Check UnfairLocalInspectionTool
 @Suppress("unused")
 class MarkdownLintInspection : LocalInspectionTool() {
@@ -21,20 +24,23 @@ class MarkdownLintInspection : LocalInspectionTool() {
     override fun checkFile(
         file: PsiFile,
         manager: InspectionManager,
-        isOnTheFly: Boolean
+        isOnTheFly: Boolean, /*  true if inspection was run in non-batch mode - not sure what to do with that info */
     ): Array<ProblemDescriptor>? {
         val project = file.project
+        val document = getDocumentFromFile(file)
+        val isMainFile = file == getMainPsi(file)
+        val pluginEnabled = MarkdownlintSettingsConfigurable(project).settings.pluginEnabled
+        val isMdExtension = file.fileType.defaultExtension == "md"
 
         // "Return early" if not relevant
-        if (!MarkdownlintSettingsConfigurable(project).settings.pluginEnabled) return null
-        if (file != getMainPsi(file)) return null
-        if (file.fileType.defaultExtension != "md") return null
+        if (!pluginEnabled) return null
+        if (!isMainFile) return null // Inspired by editor-config plugin
+        if (!isMdExtension) return null
         if (!file.isWritable) return null
         // TODO: Check isEnabled
         // TODO: Check isIgnored
         // TODO: Check charsetData
 
-        val document = getDocumentFromFile(file)
         val lintErrors = doWithMarkdownlintViaNode(
             file,
             MarkdownlintSettingsConfigurable(project).settings.customConfigPath,
@@ -66,9 +72,8 @@ class MarkdownLintInspection : LocalInspectionTool() {
      */
     private fun doWithMarkdownlintViaNode(
         file: PsiFile,
-        customConfigPath: String? = null
+        customConfigPath: String = defaultCustomConfigPath
     ): List<MarkdownLintError> {
-        if (customConfigPath != null) println("!!! Using custom config path: $customConfigPath")
 
         // This is pure madness, but it's how "official" vscode-markdownlint does it
         val jsCode = """
@@ -78,7 +83,7 @@ class MarkdownLintInspection : LocalInspectionTool() {
             const modeAsName = "markdownlint-cli2-config"; // 1st argv is config path 
             const name = "test.md";
             const argv = [
-                "${customConfigPath ?: "/Users/strajk/Projects/setup/.markdownlint-cli2.yaml"}",
+                "$customConfigPath",
                 "${file.virtualFile.path}"
             ];
     
@@ -147,13 +152,16 @@ class MarkdownLintInspection : LocalInspectionTool() {
     }
 
     // Unused - just for reference
-    private fun doWithMarkdownlintCli(file: PsiFile): List<MarkdownLintError>? {
+    private fun doWithMarkdownlintCli(
+        file: PsiFile,
+        customConfigPath: String = defaultCustomConfigPath
+    ): List<MarkdownLintError>? {
 
         val commandLine = GeneralCommandLine()
             .withExePath("markdownlint-cli2-config")
             .withWorkDirectory(file.virtualFile.parent.path)
 
-        commandLine.addParameter("/Users/strajk/Projects/setup/.markdownlint-cli2.yaml") // FIXME
+        commandLine.addParameter(customConfigPath) // FIXME
         return null
     }
 
