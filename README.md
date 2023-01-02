@@ -6,6 +6,8 @@
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
 -->
 
+🙈 **NOTE: This is my first ever Kotlin project, so please be gentle.**
+
 😱 **BEWARE: This is a work in progress. It's not ready for use yet, but I wanted to publish it to get feedback.**
 
 <!-- Plugin description -->
