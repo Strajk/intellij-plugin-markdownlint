@@ -29,6 +29,28 @@ This plugin integrates [markdownlint](https://github.com/DavidAnson/markdownlint
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
 
+## FAQ
+
+### It's slooow!
+
+I know, but I don't know how to make it faster. I'm open to suggestions. This is my first ever Kotlin project so I probably did something wrong.
+
+### Getting `java.io.IOException: Cannot run program "node"`
+
+Your IDE does not have `node` in its `PATH`. 
+If you have node installed and it works elsewhere (e.g. in the terminal), 
+the probable cause is that your "normal" `PATH` is not the same as the `PATH` used by IntelliJ.
+That's usually caused by a custom `.bashrc`/`.zshrc`/`...` that adjust your `PATH` for your terminal, but not for IntelliJ IDEs.
+**Hotfix** is to launch your IDE from the terminal, so that it inherits your `PATH` from the terminal.
+```
+open -a "WebStorm"` on macOS
+`webstorm` on Linux
+`webstorm.exe` on Windows
+```
+Read more on [StackOverflow](https://stackoverflow.com/questions/15201763/intellij-does-not-recognize-path-variable).
+
+Proper fix would be to not use `node` from the plugin, but I simply don't know how to do that yet ¯\_(ツ)_/¯
+
 ## Feature parity with "official" [VSCode extension](https://github.com/DavidAnson/vscode-markdownlint)
 
 - [ ] [Fixing](https://github.com/DavidAnson/vscode-markdownlint#fix)
