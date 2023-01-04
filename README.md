@@ -51,6 +51,17 @@ Read more on [StackOverflow](https://stackoverflow.com/questions/15201763/intell
 
 Proper fix would be to not use `node` from the plugin, but I simply don't know how to do that yet ¯\_(ツ)_/¯
 
+<details>
+<summary>💡 Possible solution: Use "IDE's" node</summary>
+
+Maybe rather than depending on system `node`, we could:
+
+- specify `NodeJs` in `platformPlugins` in `gradle.properties` to require Node
+- use `NodeJsInterpreter`
+- StLint seems to work that way, maybe we can take inspiration from there
+
+</details>
+
 ## Feature parity with "official" [VSCode extension](https://github.com/DavidAnson/vscode-markdownlint)
 
 - [ ] [Fixing](https://github.com/DavidAnson/vscode-markdownlint#fix)
