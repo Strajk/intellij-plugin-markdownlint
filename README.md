@@ -6,15 +6,20 @@
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
 -->
 
-🙈 **NOTE: This is my first ever Kotlin project, so please be gentle.**
-
-😱 **BEWARE: This is a work in progress. It's not ready for use yet, but I wanted to publish it to get feedback.**
-
 <!-- Plugin description -->
 This plugin integrates [markdownlint](https://github.com/DavidAnson/markdownlint) into IntelliJ IDEs.
 <!-- Plugin description end -->
 
 ![Screenshot](screenshot.png)
+
+#### Story-time explaining what this is and what it isn't.
+
+I like markdownlint and Jetbrains IDEs.  
+I wanted to to try out Kotlin and IntelliJ Platform Plugin Development – had no experience with either.  
+I had some spare time for it, but it's a fun experiment and should not be considered as serious polished project.  
+**It's working, I'm using it myself, but it's far from perfect.**  
+I'm open for contributions, advices, ideas, but I in all honesty, I probably will not be actively working on it.
+
 
 ## Installation
 
