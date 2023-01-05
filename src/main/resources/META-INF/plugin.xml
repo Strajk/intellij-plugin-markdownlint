@@ -26,12 +26,11 @@
                 runForWholeFile="true"
                 level="WEAK WARNING"
 
-                bundle="MarkdownLintBundle"
+                bundle="messages.MarkdownLintBundle"
 
-                groupKey="inspection.display.name"
+                groupKey="inspection.group.name"
+                key="inspection.key.name"
                 shortName="markdownlint"
-
-                key="MarkdownLintInspection"
 
                 implementationClass="me.strajk.intellijpluginmarkdownlint.MarkdownLintInspection"
         />

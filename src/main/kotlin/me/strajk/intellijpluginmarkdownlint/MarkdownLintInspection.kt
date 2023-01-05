@@ -54,7 +54,9 @@ class MarkdownLintInspection : LocalInspectionTool() {
                 //  but I was getting `java.lang.IndexOutOfBoundsException: Wrong line: 5. Available lines count: 0`
                 //  when rapidly deleting the contents of a file
                 //  (inspired by https://github.com/andrepdo/findbugs-idea/commit/8f431b776400749d0c70ea9efa19c1f5cda303a7)
+                // NOTE: This still crashes some times :/
                 .coerceAtMost(documentLineCount)
+
             val start = document?.getLineStartOffset(lineNumberAbs) ?: 0
             val end = document?.getLineEndOffset(lineNumberAbs) ?: 0
             val range = TextRange(start, end)
@@ -196,16 +198,15 @@ class MarkdownLintInspection : LocalInspectionTool() {
 }
 
 data class MarkdownLintError(
-    val lineNumber: Int?,
-    val ruleDescription: String?,
-    // TODO: Handle other fields?
-    // val errorContext: String?,
-    // val errorDetail: Any?,
-    // val errorRange: Any?,
-    // val fileName: String?,
-    // val fixInfo: FixInfo?,
-    // val ruleInformation: String?,
-    // val ruleNames: List<String?>?
+    val lineNumber: Int?, // e.g. 5
+    val ruleDescription: String?, // e.g. `Unordered list style`
+    // val errorContext: String?, // e.g. - `item 1`
+    // val errorDetail: Any?, // e.g. `Expected: dash; Actual: asterisk`
+    // val errorRange: Any?, // e.g. [1, 5]
+    // val fileName: String?, // e.g. `/Users/.../.../test.md`
+    // val fixInfo: FixInfo?, // e.g. { "editColumn": 1, "deleteCount": 1, "insertText": "-" }
+    // val ruleInformation: String?, // e.g. https://github.com/DavidAnson/markdownlint/blob/v0.26.2/doc/Rules.md#md004
+    // val ruleNames: List<String?>? // e.g. [ "MD004", "ul-style" ]
 )
 
 //data class FixInfo(
