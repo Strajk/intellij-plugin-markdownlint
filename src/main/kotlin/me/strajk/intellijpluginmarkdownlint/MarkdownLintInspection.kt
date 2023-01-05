@@ -59,11 +59,12 @@ class MarkdownLintInspection : LocalInspectionTool() {
             val end = document?.getLineEndOffset(lineNumberAbs) ?: 0
             val range = TextRange(start, end)
             logger.info("Lint error: #$lineNumberAbs: ${error.ruleDescription}")
+            val description = "Markdownlint: ${error.ruleDescription!!}" // NOTE: not sure if including "markdownlint" in description is the best practice
             manager.createProblemDescriptor(
                 file,
                 range,
-                error.ruleDescription!!, // non-null assertion
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                description,
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, // NOTE: not sure with this type
                 isOnTheFly
             )
         }
