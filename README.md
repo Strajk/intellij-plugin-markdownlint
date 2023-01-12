@@ -7,7 +7,8 @@
 -->
 
 <!-- Plugin description -->
-This plugin integrates [markdownlint](https://github.com/DavidAnson/markdownlint) into IntelliJ IDEs.
+Support for [markdownlint](https://github.com/DavidAnson/markdownlint) in IntelliJ IDEs.
+**BEWARE: This is my first ever Kotlin project, and first ever plugin – so handle with care and don't hesitate to submit issues/PRs on GitHub.**
 <!-- Plugin description end -->
 
 ![Screenshot](screenshot.png)
