@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>me.strajk.intellijpluginmarkdownlint</id>
-    <name>markdownlint</name>
+    <name>Markdownlint</name>
     <vendor>strajk</vendor>
     <category>Inspections</category>
 
