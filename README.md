@@ -23,6 +23,14 @@ I'm open for contributions, advices, ideas, but I in all honesty, I probably wil
 
 ## Installation
 
+> **Important**
+>
+> To use this plugin, you need to have
+> * `markdownlint-cli2` globally installed and available in your `PATH` (`npm i -g markdownlint-cli2`)
+> * `node` installed and available in your `PATH`
+> Check plugin settings to verify that everything is set up correctly.
+> ![](./screenshot-checks.png)
+
 - ~~Using IDE built-in plugin system~~: 🚫 NOT YET PUBLISHED 🚫
   
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "intellij-plugin-markdownlint"</kbd> >
