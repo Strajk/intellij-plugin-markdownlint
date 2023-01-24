@@ -88,9 +88,10 @@ Maybe rather than depending on system `node`, we could:
 - [ ] Add tests
 - [ ] Intention to Suppress
 - [ ] Intention to Fix
+- [ ] Restart action
 
 ## Development
 
-- Plugin should be able to "Auto-Reload", but does not work for me. I have to re-run "Run plugin" configuration every time I make a change.
+- Plugin should be able to "Auto-Reload", but it does not work for me. I have to re-run "Run plugin" configuration every time I make a change.
 - Debugging seems to work fine, at least for the "Run Plugin" configuration.
   - Does not work for me for "Run Tests" configuration. 

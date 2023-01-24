@@ -25,6 +25,7 @@ class MarkdownLintInspection : LocalInspectionTool() {
         manager: InspectionManager,
         isOnTheFly: Boolean, /*  true if inspection was run in non-batch mode - not sure what to do with that info */
     ): Array<ProblemDescriptor>? {
+        println("🔧 Checking file: ${file.name}")
         val project = file.project
         val document = getDocumentFromFile(file)
         val isMainFile = file == getMainPsi(file)

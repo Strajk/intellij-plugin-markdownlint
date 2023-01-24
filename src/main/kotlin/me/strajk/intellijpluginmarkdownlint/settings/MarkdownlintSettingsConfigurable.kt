@@ -1,5 +1,6 @@
 package me.strajk.intellijpluginmarkdownlint.settings
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
@@ -24,4 +25,12 @@ class MarkdownlintSettingsConfigurable(
     override fun getDisplayName(): String {
         return "Markdownlint Settings"
     }
+
+    override fun apply() {
+        super.apply()
+        // FIXME: This is not working, it does not actually re-run checks for open files
+        println("Restarting DaemonCodeAnalyzer")
+        DaemonCodeAnalyzer.getInstance(project).restart()
+    }
+
 }
