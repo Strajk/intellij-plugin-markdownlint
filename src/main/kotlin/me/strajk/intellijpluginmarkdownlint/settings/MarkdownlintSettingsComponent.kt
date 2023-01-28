@@ -1,5 +1,7 @@
 package me.strajk.intellijpluginmarkdownlint.settings
 
+import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.*
@@ -7,6 +9,7 @@ import com.intellij.ui.dsl.gridLayout.Gaps
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.layout.ComponentPredicate
 import com.intellij.ui.layout.selected
+import me.strajk.intellijpluginmarkdownlint.safeCliExec
 import javax.swing.JCheckBox
 
 val nonFoundMsg = "🚫 Not found".replace(" ", "\u00a0") // otherwise it's gonna break to more lines
@@ -28,6 +31,7 @@ class MarkdownlintSettingsComponent(
         checksGroup(isPluginEnabledCheckbox.selected)
     }
 
+    // TODO: Lower spacing between rows
     private fun Panel.configGroup(enabled: ComponentPredicate) = group(
         title = "Configuration",
         indent = false,
@@ -69,22 +73,25 @@ class MarkdownlintSettingsComponent(
             comment(checkGlobalNodeModulesPath(), maxLineLength = MAX_LINE_LENGTH_NO_WRAP).bold()
         }
         row {
-            comment("markdownlint-cli2 installed:").customize(Gaps(right = 5))
+            comment("markdownlint-cli2 installed at:").customize(Gaps(right = 5))
             comment(checkMarkdownlintInstalled(), maxLineLength = MAX_LINE_LENGTH_NO_WRAP).bold()
+        }
+        row {
+            comment("Plugin version:").customize(Gaps(right = 5))
+            comment(checkPluginMeta(), maxLineLength = MAX_LINE_LENGTH_NO_WRAP).bold()
+        }
+        row {
+            comment("If you get some non passing checks, check FAQ section on GitHub README").bold()
         }
     }.enabledIf(enabled).horizontalAlign(HorizontalAlign.FILL)
 
     private fun checkNodeInstalled(): String {
-        return ProcessBuilder("which", "node")
-            .start()
-            .inputStream.bufferedReader().readText()
+        return safeCliExec("which", "node")
             .ifEmpty { nonFoundMsg }
     }
 
     private fun checkNodeVersion(): String {
-        return ProcessBuilder("node", "--version")
-            .start()
-            .inputStream.bufferedReader().readText()
+        return safeCliExec("node", "--version")
             .ifEmpty { nonFoundMsg }
     }
 
@@ -93,21 +100,23 @@ class MarkdownlintSettingsComponent(
             const root = require('child_process').execSync('npm root -g').toString().trim()
             console.log(root)
         """.trimIndent()
-        return ProcessBuilder("node", "-e", jsCode)
-            .start()
-            .inputStream.bufferedReader().readText()
+        return safeCliExec("node", "-e", jsCode)
             .ifEmpty { nonFoundMsg }
     }
 
     private fun checkMarkdownlintInstalled(): String {
         val jsCode = """
             const root = require('child_process').execSync('npm root -g').toString().trim()
-            const lib = require(root + '/markdownlint-cli2')
-            console.log(typeof lib === 'object' ? 'Installed' : '')
+            const wholePath = root + '/markdownlint-cli2'
+            const lib = require(wholePath)
+            console.log(typeof lib === 'object' ? wholePath : '')
         """.trimIndent()
-        return ProcessBuilder("node", "-e", jsCode)
-            .start()
-            .inputStream.bufferedReader().readText()
+        return safeCliExec("node", "-e", jsCode)
             .ifEmpty { nonFoundMsg }
+    }
+
+    private fun checkPluginMeta(): String {
+        val ideaPluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId("me.strajk.intellijpluginmarkdownlint"))
+        return ideaPluginDescriptor?.version ?: "unknown"
     }
 }

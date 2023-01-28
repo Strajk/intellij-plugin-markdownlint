@@ -95,3 +95,7 @@ Maybe rather than depending on system `node`, we could:
 - Plugin should be able to "Auto-Reload", but it does not work for me. I have to re-run "Run plugin" configuration every time I make a change.
 - Debugging seems to work fine, at least for the "Run Plugin" configuration.
   - Does not work for me for "Run Tests" configuration. 
+- Testing build by manually installing in IDE
+- Run `buildPlugin` task in Gradle, not `build` task
+  - zip will be in `./build/distributions` 
+  - Don't forget to close IDE running from "Run plugin" configuration if you get "Execution failed for task ':buildSearchableOptions'" error

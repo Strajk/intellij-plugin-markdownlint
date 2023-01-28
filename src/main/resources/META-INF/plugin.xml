@@ -7,6 +7,7 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
+    <!--suppress PluginXmlValidity - `org.intellij.plugins.markdown` gets incorrectly reported -->
     <depends>org.intellij.plugins.markdown</depends>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -18,21 +19,14 @@
                 instance="me.strajk.intellijpluginmarkdownlint.settings.MarkdownlintSettingsConfigurable"
         />
 
+        <!-- Originally the logic was in localInspection,
+            but based on JetBrains team feedback I changed it to ExternalAnnotator
+            see git history for the original solution
+        -->
         <!--suppress PluginXmlValidity - `language="Markdown"` gets incorrectly reported -->
-        <localInspection
+        <externalAnnotator
                 language="Markdown"
-
-                enabledByDefault="true"
-                runForWholeFile="true"
-                level="WEAK WARNING"
-
-                bundle="messages.MarkdownLintBundle"
-
-                groupKey="inspection.group.name"
-                key="inspection.key.name"
-                shortName="markdownlint"
-
-                implementationClass="me.strajk.intellijpluginmarkdownlint.MarkdownLintInspection"
+                implementationClass="me.strajk.intellijpluginmarkdownlint.MarkdownLintExternalAnnotator"
         />
 
     </extensions>

@@ -108,8 +108,6 @@ tasks {
 
     }
 
-
-
     signPlugin {
         certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
         privateKey.set(System.getenv("PRIVATE_KEY"))
@@ -129,3 +127,4 @@ tasks {
 dependencies {
     implementation("org.json:json:20220924")
 }
+
