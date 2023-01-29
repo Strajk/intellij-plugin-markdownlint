@@ -99,3 +99,8 @@ Maybe rather than depending on system `node`, we could:
 - Run `buildPlugin` task in Gradle, not `build` task
   - zip will be in `./build/distributions` 
   - Don't forget to close IDE running from "Run plugin" configuration if you get "Execution failed for task ':buildSearchableOptions'" error
+
+## Links
+
+- https://github.com/Strajk/intellij-plugin-markdownlint
+- https://plugins.jetbrains.com/plugin/20851-markdownlint
