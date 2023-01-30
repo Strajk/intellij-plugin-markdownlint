@@ -8,6 +8,7 @@
 
 <!-- Plugin description -->
 Support for [markdownlint](https://github.com/DavidAnson/markdownlint) in IntelliJ IDEs.
+
 **BEWARE: This is my first ever Kotlin project, and first ever plugin – so handle with care and don't hesitate to submit issues/PRs on GitHub.**
 <!-- Plugin description end -->
 
