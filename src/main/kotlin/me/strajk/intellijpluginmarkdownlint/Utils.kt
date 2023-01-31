@@ -10,30 +10,25 @@ import org.json.JSONArray
  * Inspired by vscode-markdownlint logic
  */
 fun execMarkdownlintViaNode(
-    file: PsiFile,
+    psiFile: PsiFile,
     customConfigPath: String = defaultCustomConfigPath
 ): List<MarkdownLintError> {
-
     // This is pure madness, but it's how "official" vscode-markdownlint does it
     val jsCode = """
-            const root = require('child_process').execSync('npm root -g').toString().trim()
-            const lib = require(root + '/markdownlint-cli2')
-    
-            const modeAsName = "markdownlint-cli2-config"; // 1st argv is config path 
-            const name = "test.md";
-            const argv = [
-                "$customConfigPath",
-                "${file.virtualFile.path}"
-            ];
+            const npmRoot = require('child_process').execSync('npm root -g').toString().trim()
+            const cliPkg = require(npmRoot + '/markdownlint-cli2')
     
             let results = [];
             const parameters = {
-              name: modeAsName,  
+              name: "markdownlint-cli2-config",  
               // fs,
               // directory,
-              argv,
+              argv: [
+                  "$customConfigPath",
+                  "${psiFile.virtualFile.path}"
+              ],
               // ["fileContents"]: {
-              //   [name]: document.getText()
+              //   ["test.md"]: document.getText()
               // },
               // "noErrors": true,
               // "noGlobs": true,
@@ -46,7 +41,7 @@ fun execMarkdownlintViaNode(
             };
     
             ;(async () => {
-              await lib.main(parameters).then(() => results);
+              await cliPkg.main(parameters).then(() => results);
               console.log(results);
             })();
         """.trimIndent()
@@ -74,6 +69,64 @@ fun execMarkdownlintViaNode(
     }
     return parseJsonOutputToDataClasses(jsonArray)
 }
+
+fun execMarkdownlintFixViaNode(
+    psiFile: PsiFile,
+    customConfigPath: String = defaultCustomConfigPath
+): String {
+    // This is pure madness, but it's how "official" vscode-markdownlint does it
+    // TODO: Dedup with execMarkdownlintViaNode
+    val jsCode = """
+        const fs = require('fs');
+        const npmRoot = require('child_process').execSync('npm root -g').toString().trim()
+        const cliPkg = require(npmRoot + '/markdownlint-cli2')
+        const helpers = require(npmRoot + '/markdownlint-cli2/node_modules/markdownlint/helpers')
+        const fileContent = fs.readFileSync("${psiFile.virtualFile.path}", "utf8")
+
+        let results = [];
+        const parameters = {
+          name: "markdownlint-cli2-config",  
+          // fs,
+          // directory,
+          argv: [
+              "$customConfigPath",
+              "${psiFile.virtualFile.path}"
+          ],
+          // ["fileContents"]: {
+          //   ["test.md"]: document.getText()
+          // },
+          // "noErrors": true,
+          // "noGlobs": true,
+          // "noRequire": true, // getNoRequire(scheme)
+          // "optionsDefault": {}, // await getOptionsDefault(fs, configuration, config)
+          "optionsOverride": {
+            "fix": false,
+            "outputFormatters": [ [ (options) => results = options.results ] ]
+          }
+        };        
+
+        ;(async () => {
+          await cliPkg.main(parameters).then(() => results);
+          const fixed = helpers.applyFixes(fileContent, results)
+          // TODO: Somehow fixed content sometimes have trailing newlines
+          console.log(fixed || fileContent)
+        })();
+    """.trimIndent()
+
+    val output = try {
+        val processBuilder = ProcessBuilder("node", "-e", jsCode)
+        val process = processBuilder.start()
+        process.inputStream.bufferedReader().readText()
+    } catch (e: Exception) {
+        if (e.message?.contains("Cannot run program \"node\"") == true) {
+            "[]" // TODO: Maybe directly returning empty list would be better?
+        } else {
+            throw e
+        }
+    }
+    return output
+}
+
 
 fun parseJsonOutputToDataClasses(jsonArray: JSONArray): List<MarkdownLintError> {
     val list = mutableListOf<MarkdownLintError>()

@@ -86,10 +86,10 @@ Maybe rather than depending on system `node`, we could:
 
 ## Issues/Todo
 
+- [x] Action to Fix file
+- [ ] Restart action
 - [ ] Add tests
 - [ ] Intention to Suppress
-- [ ] Intention to Fix
-- [ ] Restart action
 
 ## Development
 
@@ -100,6 +100,8 @@ Maybe rather than depending on system `node`, we could:
 - Run `buildPlugin` task in Gradle, not `build` task
   - zip will be in `./build/distributions` 
   - Don't forget to close IDE running from "Run plugin" configuration if you get "Execution failed for task ':buildSearchableOptions'" error
+- How to debug jsCode blocks?
+  - Not sure ¯\_(ツ)_/¯   
 
 ## Links
 

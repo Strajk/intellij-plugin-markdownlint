@@ -11,6 +11,7 @@
     <depends>org.intellij.plugins.markdown</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!-- TODO: Maybe get rid of the services altogether? -->
         <applicationService serviceImplementation="me.strajk.intellijpluginmarkdownlint.services.MyApplicationService"/>
         <projectService serviceImplementation="me.strajk.intellijpluginmarkdownlint.services.MyProjectService"/>
 
@@ -30,6 +31,17 @@
         />
 
     </extensions>
+
+    <actions>
+        <action id="Markdownlint.FixFile"
+                class="me.strajk.intellijpluginmarkdownlint.action.FixFileAction"
+                text="Markdownlint: Fix File"
+                description="Fix all fixable Markdownlint issues in the file"
+        >
+            <add-to-group group-id="RefactoringMenu"/>
+        </action>
+        <!-- TODO: Add enable/disable action -->
+    </actions>
 
     <applicationListeners>
         <listener class="me.strajk.intellijpluginmarkdownlint.listeners.MyProjectManagerListener"
